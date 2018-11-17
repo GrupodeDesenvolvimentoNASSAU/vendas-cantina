@@ -97,7 +97,7 @@ public class DelecaoFuncionario extends JFrame {
 		contentPane.add(tfID);
 		tfID.setColumns(5);
 		
-		/*
+		
 		JButton btnNewButton_3 = new JButton("Deletar");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -133,6 +133,5 @@ public class DelecaoFuncionario extends JFrame {
 		});
 		btnNewButton_3.setBounds(10, 260, 105, 34);
 		contentPane.add(btnNewButton_3);
-		*/
 	}
 }

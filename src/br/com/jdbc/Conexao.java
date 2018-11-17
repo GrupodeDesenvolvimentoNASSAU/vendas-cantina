@@ -15,15 +15,17 @@ public class Conexao {
 
 	// Definição das variáveis
 	private static final String JDBC_DRIVER = "com.mysql.jdbc.driver";
-	private static final String DB_URL = "jdbc:mysql://localhost:3306/bd_lanchonete1?useTimezone=true&serverTimezone=UTC";
+	private static final String DB_URL = "jdbc:mysql://localhost?autoReconnect=true&useSSL=false";
 	private static final String USER = "root";
 	private static final String PASS = "123456";
-
-	public  Connection getConexao() {
+	
+	private static Conexao c = new Conexao();
+	
+	private Conexao() {}
+	
+	private  Connection getConexao() {
 		Connection con = null;
 		Statement stmt = null;
-		
-
 		try {
 			// Registrar o drive JDBC
 			try {
@@ -51,15 +53,10 @@ public class Conexao {
 		return con;
 	}
 	
-	public static void main(String[] args) {
-		ProdutoDAO p = new ProdutoDAO();
-		ArrayList<Categoria> listaProdutos = new ArrayList<Categoria>();
-		//listaProdutos = p.listaCategoria();
-		for (Categoria produto : listaProdutos) {
-			
-			System.out.println("Nome: " + produto.getNome());
+	public static Connection getInstancia() {
+		return c.getConexao();
 			
 		}
-	}
+	
 
 }

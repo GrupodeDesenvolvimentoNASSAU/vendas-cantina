@@ -59,7 +59,7 @@ public class Pagamento extends JFrame {
 		contentPane.add(chckbxNewCheckBox);
 		
 		JButton btnDH = new JButton("");
-		btnDH.setIcon(new ImageIcon(Pagamento.class.getResource("/com/img/notes.png")));
+		btnDH.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\notes.png"));
 		btnDH.setName("Dinheiro");
 		btnDH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -74,7 +74,7 @@ public class Pagamento extends JFrame {
 		contentPane.add(btnDH);
 		
 		JButton btnCT = new JButton("");
-		btnCT.setIcon(new ImageIcon(Pagamento.class.getResource("/com/img/cards.png")));
+		btnCT.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\cards.png"));
 		btnCT.setName("Cartao");
 		btnCT.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -98,7 +98,7 @@ public class Pagamento extends JFrame {
 
 private void AcaoPagar(JButton btn) {
 	String tx = entrada.getText();
-	int res = Vendas.confirmaPgmt(tx, btn);
+	int res = ViewVendas.confirmaPgmt(tx, btn);
 	if (res == 1 | res == 0) {
 		dispose();
 		}	

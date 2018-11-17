@@ -1,7 +1,6 @@
 package br.com.views;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -15,7 +14,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
-import javax.swing.ImageIcon;
 
 public class Configuracoes extends JFrame {
 
@@ -42,9 +40,8 @@ public class Configuracoes extends JFrame {
 	 */
 	public Configuracoes() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 500, 310);
+		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240,230,140));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -59,7 +56,6 @@ public class Configuracoes extends JFrame {
 		contentPane.add(lblNewJgoodiesLabel);
 		
 		JButton btnNewButton = new JButton("Voltar");
-		btnNewButton.setIcon(new ImageIcon(Configuracoes.class.getResource("/com/img/voltar.png")));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Configuracoes.this.dispose();
@@ -67,7 +63,7 @@ public class Configuracoes extends JFrame {
 				men.setVisible(true);
 			}
 		});
-		btnNewButton.setBounds(379, 255, 105, 35);
+		btnNewButton.setBounds(351, 266, 89, 23);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Funcionário");

@@ -1,7 +1,6 @@
 package br.com.views;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
@@ -11,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import br.com.dao.ComandosSQL;
+import br.com.jdbc.Conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,8 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -67,7 +68,6 @@ public class CadastroCategoria extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 500, 310);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240,230,140));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -78,9 +78,9 @@ public class CadastroCategoria extends JFrame {
         
 		
 		JButton btnNewButton = new JButton("Gravar");
-		btnNewButton.setIcon(new ImageIcon(CadastroCategoria.class.getResource("/com/img/salvar.png")));
+		btnNewButton.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\salvar.png"));
 		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0){
+			public void actionPerformed(ActionEvent arg0) {
 
 				boolean verificarTfCodNula = tfCod.getText().isEmpty();
 				boolean verificarTfCategNula1 = tfCateg.getText().isEmpty();
@@ -90,23 +90,38 @@ public class CadastroCategoria extends JFrame {
 					}
 					else {
 						if(verificarTfCodNula == true && verificarTfCategNula1 == false) {
-							String Categoria_consulta = tfCateg.getText();
-							ResultSet rs = ComandosSQL.InserirCategoria(Categoria_consulta);
-							
-							JOptionPane.showMessageDialog(null, "Categoria cadastrada com sucesso!"); 
+							try {
+								Connection con = Conexao.criarConexao();
+								String Query = "insert into categorias(nome_categ) value (?)";
+								PreparedStatement stmt = con.prepareStatement(Query);
+								
+								stmt.setString(1, tfCateg.getText());
+								
+								stmt.execute();
+								
+								stmt.close();
+								con.close();
+								JOptionPane.showMessageDialog(null, "Categoria cadastrada com sucesso!");
+
+								}
+							catch (SQLException | ClassNotFoundException ex) {
+								ex.printStackTrace();
+							} 
 					}
 						if(verificarTfCodNula == false){
 							try {
 								int linha = jtCategoria.getSelectedRow();
-								String Categoria_consulta = tfCateg.getText();
 								String colun_vlr = jtCategoria.getValueAt(linha, 0).toString(); // saber coluna para ser capturada o valor (momento está pegando o CODIGO)
 								
-								ResultSet rs = ComandosSQL.AlterarCategoria(Categoria_consulta, colun_vlr);
-
+								Connection con = Conexao.criarConexao();
+								String sql = "update categorias set nome_categ = '"+ tfCateg.getText() +"' where id_categ =" + colun_vlr;
+								PreparedStatement stmt = con.prepareStatement(sql);
+								stmt.execute();
+								stmt.close();
 								JOptionPane.showMessageDialog(null, "Alterado com sucesso!");
 								} 
 							
-							catch (ArrayIndexOutOfBoundsException e) {
+							catch (SQLException | ClassNotFoundException | ArrayIndexOutOfBoundsException e) {
 								e.printStackTrace();
 							}
 						}
@@ -120,8 +135,10 @@ public class CadastroCategoria extends JFrame {
 				
 				try {
 					
-					ResultSet rs = ComandosSQL.ConsultaCategoria();
-					
+					Connection con = Conexao.criarConexao(); //conexao 
+					String sql = "select * from categorias"; // buscar
+					PreparedStatement stmt = con.prepareStatement(sql);  // preparando informações 
+					ResultSet rs = stmt.executeQuery(); // consulta ao banco
 					DefaultTableModel modelo = (DefaultTableModel)jtCategoria.getModel();
 					modelo.setNumRows(0); //inicia com 0 linhas
 					
@@ -129,6 +146,13 @@ public class CadastroCategoria extends JFrame {
 						modelo.addRow(new Object[] {rs.getString("id_categ"), rs.getString("nome_categ")});
 					}
 					
+					rs.close();
+					con.close();
+					
+					
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -143,16 +167,26 @@ public class CadastroCategoria extends JFrame {
 		tfCateg = new JTextField();
 		tfCateg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			try {
-				ResultSet rs = ComandosSQL.ConsultaCategoria();
-			
-				DefaultTableModel modelo = (DefaultTableModel)jtCategoria.getModel();
-				modelo.setNumRows(0); //inicia com 0 linhas
-				
-				while (rs.next()) {
-					modelo.addRow(new Object[] {rs.getString("id_categ"), rs.getString("nome_categ")});
-				}
-			
+					try {
+					
+					Connection con = Conexao.criarConexao(); //conexao 
+					String sql = "select * from categorias"; // buscar
+					PreparedStatement stmt = con.prepareStatement(sql);  // preparando informações 
+					ResultSet rs = stmt.executeQuery(); // consulta ao banco
+					DefaultTableModel modelo = (DefaultTableModel)jtCategoria.getModel();
+					modelo.setNumRows(0); //inicia com 0 linhas
+					
+					while (rs.next()) {
+						modelo.addRow(new Object[] {rs.getString("id_categ"), rs.getString("nome_categ")});
+					}
+					
+					rs.close();
+					con.close();
+					
+					
+				} catch (ClassNotFoundException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
 				} catch (SQLException ex) {
 					// TODO Auto-generated catch block
 					ex.printStackTrace();
@@ -188,37 +222,34 @@ public class CadastroCategoria extends JFrame {
 		scrollPane.setColumnHeaderView(spinner);
 		
 		JButton btnNewButton_2 = new JButton("Excluir");
-		btnNewButton_2.setIcon(new ImageIcon(CadastroCategoria.class.getResource("/com/img/lixeira.png")));
+		btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\lixeira.png"));
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				if (jtCategoria.getSelectedRow() != -1) {
 		            int linha = jtCategoria.getSelectedRow();
-		            Object linha_deletar = (jtCategoria.getValueAt(linha, 0));       // saber coluna para ser capturada o valor (momento está pegando o CODIGO)
-		            String linha_nome = jtCategoria.getValueAt(linha, 1).toString(); // saber coluna para ser capturada o valor (momento está pegando o NOME DA CATEGORIA)
-		            String nome = "Deseja deletar a categoria: " + linha_nome + " ?";
-					
-					int opcao_escolhida = JOptionPane.showConfirmDialog(null, nome, "Exclusão ", JOptionPane.YES_NO_OPTION);
-					
-					if (opcao_escolhida == JOptionPane.YES_OPTION) {
-						ResultSet rsc = ComandosSQL.getProd_vinculado_categ(linha_deletar);
-						try {
-							while (rsc.next()) {
-								int Total = rsc.getInt("TOTAL");
-								if (Total == 0) {
-									ResultSet rs = ComandosSQL.DeletarCategoria(linha_deletar);
-									((DefaultTableModel) jtCategoria.getModel()).removeRow(linha);
-								    JOptionPane.showMessageDialog(null, "Exclusão realizada com sucesso!");	
-								}
-								else {
-									JOptionPane.showMessageDialog(null, "Não foi passível excluir a categoria, devido estar vinculada a algum produto.");
-								}
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-											    
-					}
+		            try {
+		            	Connection con = Conexao.criarConexao(); //conexao 
+		                String sql = "DELETE FROM categorias  WHERE id_categ = " + (jtCategoria.getValueAt(linha, 0)); // buscar
+						PreparedStatement stmt = con.prepareStatement(sql);  // preparando informações 
+						
+		                String nome = "Deseja deletar a categoria: " + jtCategoria.getValueAt(linha, 1).toString() + " ?";
+		                int opcao_escolhida = JOptionPane.showConfirmDialog(null, nome, "Exclusão ", JOptionPane.YES_NO_OPTION);
+		                if (opcao_escolhida == JOptionPane.YES_OPTION) {
+		                	int rs = stmt.executeUpdate("DELETE FROM categorias WHERE id_categ = '" + (jtCategoria.getValueAt(linha, 0)) + "'");// consulta ao banco
+							con.close();
+		                    
+		                    if (rs == 1) {
+		                    	((DefaultTableModel) jtCategoria.getModel()).removeRow(jtCategoria.getSelectedRow());
+		                        JOptionPane.showMessageDialog(null, "Exclusão realizada com sucesso!");
+		                    }
+		                } else {
+		                    return;
+		                }
+		            } catch (SQLException e) {
+		                JOptionPane.showMessageDialog(null, "Erro ao tentar excluir o registro...");
+		            } catch (ClassNotFoundException e) {
+		            }
 		        } else {
 		            JOptionPane.showMessageDialog(null, "Selecione um registro para excluir");
 		        }		
@@ -228,7 +259,7 @@ public class CadastroCategoria extends JFrame {
 		contentPane.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Editar");
-		btnNewButton_3.setIcon(new ImageIcon(CadastroCategoria.class.getResource("/com/img/editar.png")));
+		btnNewButton_3.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\editar.png"));
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -238,7 +269,7 @@ public class CadastroCategoria extends JFrame {
 				else {
 					int linha = jtCategoria.getSelectedRow(); // saber linha selecionada
 					String colun_vlr = jtCategoria.getValueAt(linha, 0).toString(); // saber coluna para ser capturada o valor (momento está pegando o CODIGO)
-					String colun_vlr2 = jtCategoria.getValueAt(linha, 1).toString();// saber coluna para ser capturada o valor (momento está pegando o NOME DA CATEGORIA)
+					String colun_vlr2 = jtCategoria.getValueAt(linha, 1).toString();
 					tfCateg.setText(colun_vlr2);
 					tfCod.setText(colun_vlr);
 					tfCateg.requestFocus();
@@ -251,7 +282,7 @@ public class CadastroCategoria extends JFrame {
 		contentPane.add(btnNewButton_3);
 		
 		JButton btnNewButton_4 = new JButton("Voltar");
-		btnNewButton_4.setIcon(new ImageIcon(CadastroCategoria.class.getResource("/com/img/voltar.png")));
+		btnNewButton_4.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\voltar.png"));
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CadastroCategoria.this.dispose();

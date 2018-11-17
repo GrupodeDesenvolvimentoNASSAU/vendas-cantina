@@ -48,7 +48,7 @@ public class Menu extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 500, 310);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240,230,140));
+		//contentPane.setBackground(new Color(240,230,140));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -64,7 +64,7 @@ public class Menu extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					Vendas vna = new Vendas();
+					ViewVendas vna = new ViewVendas();
 					vna.setVisible(true);
 					dispose();
 				} catch (SQLException e1) {
@@ -114,7 +114,7 @@ public class Menu extends JFrame {
 		contentPane.add(btnNewButton_3);
 		
 		JButton btnNewButton_4 = new JButton("Voltar");
-		btnNewButton_4.setIcon(new ImageIcon(Menu.class.getResource("/com/img/voltar.png")));
+		btnNewButton_4.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\voltar.png"));
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Menu.this.dispose();

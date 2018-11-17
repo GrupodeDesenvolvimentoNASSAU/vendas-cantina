@@ -44,7 +44,7 @@ public class Relatorio extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 500, 310);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240,230,140));
+		//contentPane.setBackground(new Color(240,230,140));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -66,12 +66,12 @@ public class Relatorio extends JFrame {
 		contentPane.add(dataInicial);
 		
 		JButton btnNewButton = new JButton("Imprimir");
-		btnNewButton.setIcon(new ImageIcon(Relatorio.class.getResource("/com/img/imprimir.png")));
+		btnNewButton.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\imprimir.png"));
 		btnNewButton.setBounds(10, 266, 110, 35);
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Voltar");
-		btnNewButton_1.setIcon(new ImageIcon(Relatorio.class.getResource("/com/img/voltar.png")));
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\voltar.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Relatorio.this.dispose();

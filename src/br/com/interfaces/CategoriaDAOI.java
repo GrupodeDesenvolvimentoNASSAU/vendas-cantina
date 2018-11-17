@@ -6,6 +6,7 @@ import br.com.model.Categoria;
 
 public interface CategoriaDAOI {
 	
+	
 	public ArrayList<Categoria> listaCategoria();
 
 }

@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.table.DefaultTableModel;
 
 import br.com.dao.ComandosSQL;
+import br.com.jdbc.Conexao;
 
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -59,7 +60,7 @@ public class ConsultaProduto extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 500, 310);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(240,230,140));
+		//contentPane.setBackground(new Color(240,230,140));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -75,7 +76,7 @@ public class ConsultaProduto extends JFrame {
 		contentPane.add(lblPesquisarProdutos);
 		
 		JButton btnNewButton = new JButton("Novo");
-		btnNewButton.setIcon(new ImageIcon(ConsultaProduto.class.getResource("/com/img/novo.png")));
+		btnNewButton.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\novo.png"));
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CadastroProduto capr = new CadastroProduto();
@@ -87,7 +88,7 @@ public class ConsultaProduto extends JFrame {
 		contentPane.add(btnNewButton);
 		
 		JButton btnNewButton_1 = new JButton("Voltar");
-		btnNewButton_1.setIcon(new ImageIcon(ConsultaProduto.class.getResource("/com/img/voltar.png")));
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\voltar.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConsultaProduto.this.dispose();
@@ -106,13 +107,14 @@ public class ConsultaProduto extends JFrame {
 				DefaultTableModel modelo = (DefaultTableModel)jtProduto.getModel();
 				modelo.setNumRows(0); //inicia com 0 linhas
 
-				ResultSet rs = ComandosSQL.ConsultaProduto(Produto_consulta);
+				ResultSet rs = ComandosSQL.getCadastroProduto(Produto_consulta);
 				try {
 					while (rs.next()) {
 						modelo.addRow(new Object[] {rs.getString("id_prod"), rs.getString("nome_prod"), rs.getString("preco_prod"), rs.getString("nome_categ")});
 					}
 					rs.close();
 				} catch (SQLException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -123,14 +125,14 @@ public class ConsultaProduto extends JFrame {
 		tfProduConsul.setColumns(10);
 		
 		JButton btnNewButton_2 = new JButton("Pesquisar");
-		btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\Matheus Eduardo\\eclipse-workspace\\Vendas\\img\\pesquisar.png"));
+		btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\pesquisar.png"));
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String Produto_consulta = tfProduConsul.getText();
 				DefaultTableModel modelo = (DefaultTableModel)jtProduto.getModel();
 				modelo.setNumRows(0); //inicia com 0 linhas
 
-				ResultSet rs = ComandosSQL.ConsultaProduto(Produto_consulta);
+				ResultSet rs = ComandosSQL.getCadastroProduto(Produto_consulta);
 				try {
 					while (rs.next()) {
 						modelo.addRow(new Object[] {rs.getString("id_prod"), rs.getString("nome_prod"), rs.getString("preco_prod"), rs.getString("nome_categ")});
@@ -173,7 +175,7 @@ public class ConsultaProduto extends JFrame {
 		scrollPane.setColumnHeaderView(spinner);
 		
 		JButton btnNewButton_3 = new JButton("Editar");
-		btnNewButton_3.setIcon(new ImageIcon(ConsultaProduto.class.getResource("/com/img/editar.png")));
+		btnNewButton_3.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\editar.png"));
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -187,20 +189,20 @@ public class ConsultaProduto extends JFrame {
 					String colun_vlr3 = jtProduto.getValueAt(linha, 3).toString();// saber coluna para ser capturada o valor (momento está pegando o CATEGORIA)
 					//System.out.println(colun_vlr3);
 					
-					AtualizarProduto ap = new AtualizarProduto();	
+					CadastroProduto cp2 = new CadastroProduto();	
 					
 					setCod(colun_vlr);
-					ap.tfCodProd.setText(colun_vlr);
+					cp2.tfCodProd.setText(colun_vlr);
 					setProd(colun_vlr1);
-					ap.tfNomeProdut.setText(colun_vlr1);
+					cp2.tfNomeProdut.setText(colun_vlr1);
 					setPre(colun_vlr2);
-					ap.tfPrecoProd.setText(colun_vlr2);
+					cp2.tfPrecoProd.setText(colun_vlr2);
 					setCategoria(colun_vlr3);
 					
-					ap.cbCateg.setSelectedItem(colun_vlr3);
+					cp2.cbCateg.setSelectedItem(colun_vlr3);
 					
 					ConsultaProduto.this.dispose();
-					ap.setVisible(true);
+					cp2.setVisible(true);
 
 
 				}
@@ -209,28 +211,36 @@ public class ConsultaProduto extends JFrame {
 		btnNewButton_3.setBounds(137, 255, 105, 35);
 		contentPane.add(btnNewButton_3);
 		
-		
 		JButton btnNewButton_4 = new JButton("Excluir");
-		btnNewButton_4.setIcon(new ImageIcon(ConsultaProduto.class.getResource("/com/img/lixeira.png")));
+		btnNewButton_4.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\lixeira.png"));
 		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				
 				if (jtProduto.getSelectedRow() != -1) {
 		            int linha = jtProduto.getSelectedRow();
-		            Object captura_cod = jtProduto.getValueAt(linha, 0);
-		            Object captura_nome = jtProduto.getValueAt(linha, 1).toString();
-		            
-		            System.out.println(captura_cod);
-		            String nome = "Deseja deletar o produto: " + captura_nome + " ?";
-					int opcao_escolhida = JOptionPane.showConfirmDialog(null, nome, "Exclusão ", JOptionPane.YES_NO_OPTION);
-					if (opcao_escolhida == JOptionPane.YES_OPTION) {
-						ResultSet rs = ComandosSQL.ExcluirProduto(captura_cod);
-						((DefaultTableModel) jtProduto.getModel()).removeRow(jtProduto.getSelectedRow());
-					    JOptionPane.showMessageDialog(null, "Exclusão realizada com sucesso!");
-					} else {
-					    return;
-					}
+		            try {
+		            	Connection con = Conexao.criarConexao(); //conexao 
+		                String sql = "DELETE FROM produtos WHERE id_prod = " + (jtProduto.getValueAt(linha, 0)); // buscar
+						PreparedStatement stmt = con.prepareStatement(sql);  // preparando informações 
+						
+		                String nome = "Deseja deletar o produto: " + jtProduto.getValueAt(linha, 1).toString() + " ?";
+		                int opcao_escolhida = JOptionPane.showConfirmDialog(null, nome, "Exclusão ", JOptionPane.YES_NO_OPTION);
+		                if (opcao_escolhida == JOptionPane.YES_OPTION) {
+		                	int rs = stmt.executeUpdate("DELETE FROM produtos WHERE id_prod = '" + (jtProduto.getValueAt(linha, 0)) + "'");// consulta ao banco
+							con.close();
+		                    
+		                    if (rs == 1) {
+		                    	((DefaultTableModel) jtProduto.getModel()).removeRow(jtProduto.getSelectedRow());
+		                        JOptionPane.showMessageDialog(null, "Exclusão realizada com sucesso!");
+		                    }
+		                } else {
+		                    return;
+		                }
+		            } catch (SQLException ex) {
+		                JOptionPane.showMessageDialog(null, "Erro ao tentar excluir o registro...");
+		            } catch (ClassNotFoundException ex) {
+		            }
 		        } else {
 		            JOptionPane.showMessageDialog(null, "Selecione um registro para excluir");
 		        }	

@@ -12,8 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import br.com.dao.ComandosSQL;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -139,7 +137,7 @@ public class CadastroFuncionario extends JFrame {
 		btnNewButton_4.setBounds(145, 260, 149, 29);
 		contentPane.add(btnNewButton_4);
 		
-		/*
+		
 		JButton btnNewButton_3 = new JButton("Gravar");
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -176,6 +174,5 @@ public class CadastroFuncionario extends JFrame {
 		});
 		btnNewButton_3.setBounds(10, 260, 105, 34);
 		contentPane.add(btnNewButton_3);
-		*/
 	}
 }

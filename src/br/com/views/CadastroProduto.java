@@ -12,9 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.synth.SynthSpinnerUI;
 import javax.swing.table.DefaultTableModel;
 
-import com.mysql.cj.xdevapi.Statement;
-
-import br.com.dao.ComandosSQL;
+import br.com.jdbc.Conexao;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -40,6 +38,7 @@ import java.awt.Font;
 public class CadastroProduto extends JFrame {
 
 	private JPanel contentPane;
+	public JTextField tfCodProd;
 	public JTextField tfNomeProdut;
 	public JTextField tfPrecoProd;
 	DefaultTableModel modelo = new DefaultTableModel();
@@ -80,7 +79,7 @@ public class CadastroProduto extends JFrame {
         this.setUndecorated(true);
 		
 		JButton btnNewButton_1 = new JButton("Voltar");
-		btnNewButton_1.setIcon(new ImageIcon(CadastroProduto.class.getResource("/com/img/voltar.png")));
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\voltar.png"));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CadastroProduto.this.dispose();
@@ -91,38 +90,39 @@ public class CadastroProduto extends JFrame {
 		btnNewButton_1.setBounds(379, 255, 105, 34);
 		contentPane.add(btnNewButton_1);
 		
-		JLabel lblNewLabel = new JLabel("Novo produto");
+		JLabel lblNewLabel = new JLabel("Produtos");
 		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel.setBounds(41, 45, 150, 14);
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Nome :");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblNewLabel_1.setBounds(115, 108, 48, 14);
+		lblNewLabel_1.setBounds(115, 119, 48, 14);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_3 = new JLabel("Pre\u00E7o :");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblNewLabel_3.setBounds(115, 148, 48, 14);
+		lblNewLabel_3.setBounds(115, 159, 48, 14);
 		contentPane.add(lblNewLabel_3);
 		
 		JLabel lblNewLabel_4 = new JLabel("Categoria :");
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblNewLabel_4.setBounds(89, 186, 76, 20);
+		lblNewLabel_4.setBounds(89, 200, 76, 14);
 		contentPane.add(lblNewLabel_4);
 		
 		tfNomeProdut = new JTextField();
-		tfNomeProdut.setBounds(173, 100, 172, 30);
+		tfNomeProdut.setBounds(173, 111, 172, 30);
 		contentPane.add(tfNomeProdut);
 		tfNomeProdut.setColumns(10);
 		
 		tfPrecoProd = new JTextField();
-		tfPrecoProd.setBounds(173, 140, 172, 30);
+		tfPrecoProd.setBounds(173, 151, 172, 30);
 		contentPane.add(tfPrecoProd);
 		tfPrecoProd.setColumns(10);
 		
 		ConsultaProduto consulprod = new ConsultaProduto();
-			
+		
+		
 		JButton btnNewButton_2 = new JButton("...");
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -132,11 +132,16 @@ public class CadastroProduto extends JFrame {
 				
 			}
 		});
-		btnNewButton_2.setBounds(355, 184, 25, 25);
+		btnNewButton_2.setBounds(355, 195, 25, 25);
 		contentPane.add(btnNewButton_2);
 
 		try {
-			ResultSet rs = ComandosSQL.ConsultaCategoria();			
+			
+			Connection con = Conexao.criarConexao();
+			String sql = "select * from categorias"; // buscar
+			PreparedStatement stmt = con.prepareStatement(sql);  // preparando informações
+			ResultSet rs = stmt.executeQuery(); // consulta ao banco
+			
 			cbCateg.addItem("");
 		    while(rs.next()){  
 		          cbCateg.addItem(rs.getString("nome_categ"));
@@ -145,58 +150,117 @@ public class CadastroProduto extends JFrame {
 		      }  
 		   rs.close();
 
-		} catch (SQLException  e1) {
+		} catch (ClassNotFoundException | SQLException  e1) {
 			e1.printStackTrace();
 		}
 		
 		
 		getContentPane().add(cbCateg);
-		cbCateg.setBounds(173, 181, 172, 30);
+		cbCateg.setBounds(173, 192, 172, 30);
 		contentPane.add(cbCateg);
 		
 		JButton btnNewButton_3 = new JButton("Gravar");
-		btnNewButton_3.setIcon(new ImageIcon(CadastroProduto.class.getResource("/com/img/salvar.png")));
+		btnNewButton_3.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\salvar.png"));
 		btnNewButton_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				String Nome_Categ = String.valueOf(cbCateg.getSelectedItem());
-				String NomeProduto = tfNomeProdut.getText();
-				String PrecoProduto = tfPrecoProd.getText();
-				//String CodProduto = tfCodProd.getText();
-				
 				boolean verificarTfNomeProdutNull = tfNomeProdut.getText().isEmpty();
 				boolean verificarTfPrecoProd = tfPrecoProd.getText().isEmpty();
 				boolean verificarTfCateg = Nome_Categ.isEmpty();
-				//boolean verificarTfCodNull = tfCodProd.getText().isEmpty();
+				boolean verificarTfCodNull = tfCodProd.getText().isEmpty();				
 				
-				if (verificarTfNomeProdutNull == false && verificarTfPrecoProd == false && verificarTfCateg == false) {
-					ResultSet rs = ComandosSQL.getNomeCategoria(Nome_Categ);
+				if (verificarTfNomeProdutNull == false && verificarTfPrecoProd == false && verificarTfCateg == false && verificarTfCodNull == true) {
 					
 					try {
+					Connection con = Conexao.criarConexao();
+					String Query = "select id_categ from categorias where nome_categ = '" + Nome_Categ + "'";
+					PreparedStatement stmt = con.prepareStatement(Query);
+					ResultSet rs = stmt.executeQuery();
+					
 					while (rs.next()) {
-						int IdCateg = rs.getInt("id_categ");
-						ResultSet rs1 = ComandosSQL.InserirProduto(NomeProduto, PrecoProduto, IdCateg);
+						int idcateg = rs.getInt("id_categ");
+						String sql = "insert into produtos(nome_prod, preco_prod, categ_prod) value ('"+ tfNomeProdut.getText() +"',"+tfPrecoProd.getText()+","+ idcateg +")";
+						PreparedStatement stmt1 = con.prepareStatement(sql);
+						stmt1.execute();
+						stmt1.close();
 						JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!");
 					}
 
-					//tfCodProd.setText("");
+					stmt.execute();
+					stmt.close();
+					con.close();
+					
+					tfCodProd.setText("");
 					tfNomeProdut.setText("");
 					tfPrecoProd.setText("");
 					cbCateg.setSelectedIndex(0);
 					tfNomeProdut.requestFocus();
 					
-					} catch (SQLException e1) {
-						e1.printStackTrace();
+				} catch (ClassNotFoundException | SQLException e1) {
+					e1.printStackTrace();
+				}
+				}
+				
+				if(verificarTfNomeProdutNull == false && verificarTfPrecoProd == false && verificarTfCateg == false && verificarTfCodNull == false){
+					try {						
+						Connection con = Conexao.criarConexao();
+						String Query = "select id_categ from categorias where nome_categ ='" + Nome_Categ + "'";
+						PreparedStatement stmt = con.prepareStatement(Query);
+						ResultSet rs = stmt.executeQuery();
+						
+						while (rs.next()) {
+							int idcateg = rs.getInt("id_categ");
+
+							String sql = "update produtos set nome_prod ='" + tfNomeProdut.getText() +"', preco_prod = '" + tfPrecoProd.getText() + "', categ_prod = '"+ idcateg +"' where id_prod =" + tfCodProd.getText();
+							PreparedStatement stmt1 = con.prepareStatement(sql);
+							stmt1.execute();
+							stmt1.close();
+						}
+						
+						tfCodProd.setText("");
+						tfNomeProdut.setText("");
+						tfPrecoProd.setText("");
+						cbCateg.setSelectedIndex(0);
+						tfNomeProdut.requestFocus();
+						
+						JOptionPane.showMessageDialog(null, "Alterado com sucesso!");
+						} 
+					
+					catch (SQLException | ClassNotFoundException | ArrayIndexOutOfBoundsException ex) {
+						ex.printStackTrace();
 					}
 				}
 				
-				else{
-					JOptionPane.showMessageDialog(null, "Por favor preencher todas as informações");
+				if (verificarTfNomeProdutNull == true || verificarTfPrecoProd == true || verificarTfCateg == true) {
+					JOptionPane.showMessageDialog(null, "Por favor preencher todas as informações referente ao produto");
 				}
+					
 			}
 		});
 		btnNewButton_3.setBounds(16, 255, 105, 34);
 		contentPane.add(btnNewButton_3);
+		
+		tfCodProd = new JTextField();
+		tfCodProd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		tfCodProd.setEnabled(false);
+		tfCodProd.setEditable(false);
+		tfCodProd.setBounds(173, 70, 45, 30);
+		contentPane.add(tfCodProd);
+		tfCodProd.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("C\u00F3d :");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblNewLabel_2.setBounds(124, 78, 39, 14);
+		contentPane.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_5 = new JLabel("");
+		lblNewLabel_5.setIcon(new ImageIcon("C:\\Users\\Logan\\eclipse-workspace\\Vendas\\img\\500_310.png"));
+		lblNewLabel_5.setBounds(0, 0, 500, 310);
+		contentPane.add(lblNewLabel_5);
 	}
 
 }

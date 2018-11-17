@@ -14,7 +14,7 @@ public class CategoriaDAO implements CategoriaDAOI{
 	Conexao c;
 	
 	public CategoriaDAO() {
-		c = new Conexao();
+		
 	}
 	
 	private Categoria empacotarCat(ResultSet rs) throws SQLException {
@@ -28,7 +28,7 @@ public ArrayList<Categoria> listaCategoria() {
 
 	ArrayList<Categoria> listaCategoria = new ArrayList<>();
 	try {
-		Connection con = c.getConexao();
+		Connection con = Conexao.getInstancia();
 		String sql = "select * from categorias";
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
